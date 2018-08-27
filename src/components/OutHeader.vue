@@ -2,7 +2,7 @@
     <div class="out-header">
         <div class="cont">
             <div class="logo">
-                <router-link to="">
+                <router-link to="/">
                     <img src="../assets/images/logo.png" />
                 </router-link>
             </div>
