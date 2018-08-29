@@ -1,7 +1,7 @@
 <template>
     <div class="home">
         <ShortcutBar />
-        <h1>首页--福缘实体联盟</h1>
+        <h1>个人中心</h1>
         <div>
             <router-link to="/login"><Button type="error">登录</Button></router-link>
             <router-link to="/register"><Button type="warning">注册</Button></router-link>
@@ -16,25 +16,17 @@
 </template>
 
 <script>
-    // 混入仓库数据
-    import {mapActions, mapGetters, mapMutations} from "vuex";
+    import { mapActions } from "vuex";
     import ShortcutBar from "@/components/ShortcutBar";
     export default {
-        name: "PagesIndex",
+        name: "PagesPersonal",
         components: {
             ShortcutBar
         },
         methods: {
-            
-            loginOut () {
-                // this.$store.commit("LOGIN_STATE", !loginState);
-            }
-        },
-        computed: {
-            
-            // loginState() {
-            //     return this.$store.getters.loginState;
-            // }
+            ...mapActions([
+                "LOGIN_STATE"
+            ])
         },
     }
 </script>

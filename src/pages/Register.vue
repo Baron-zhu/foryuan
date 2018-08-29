@@ -2,19 +2,21 @@
     <div class="register">
         <!-- 头部 -->
         <div class="shadow">
-            <OutHeader />
+            <OutHeader :login="true"/>
         </div>
         <!-- 注册表单 -->
         <main>
             <div class="register-form">
                 <form class="form-input" action="">
                     <p>用户名</p>
-                    <div class="input">
-                        <input type="text" placeholder="您的账户名和登录名">
+                    <div class="input err">
+                        <input type="text" v-model="user.email" placeholder="您的账户名和登录名">
+                        <div class="reminder" v-show="errors.email">{{errors.email}}</div>
                     </div>
                     <p>设置密码</p>
-                    <div class="input">
-                        <input type="password" placeholder="设置福缘密码（不少于6位）">
+                    <div class="input err">
+                        <input type="password" v-model="user.password" placeholder="设置福缘密码（不少于6位）">
+                        <div class="reminder" v-show="errors.password">{{errors.password}}</div>
                     </div>
                     <p>确认密码</p>
                     <div class="input">
@@ -44,9 +46,9 @@
                     </div>
                     <p>验证码</p>
                     <div class="input">
-                        <input type="text" placeholder="请再次输入密码">
-                        <span>
-                            <img src="http://111.231.196.120:4000/api/verifiycode.gif" />
+                        <input type="text" v-model="user.verifiy" placeholder="请再次输入密码">
+                        <span @click="verifiyDate = new Date().getTime()">
+                            <img :src="url" />
                         </span>
                     </div>
                     <p>短信验证</p>
@@ -55,7 +57,7 @@
                         <button type="button">获取验证码</button>
                     </div>
                     <div class="input">
-                        <input type="button" value="立即注册">
+                        <input type="button" @click="register" value="立即注册">
                     </div>
                 </form>
             </div>
@@ -63,25 +65,69 @@
                 <img :src="imgUrl" />
             </div>
         </main>
-
         <!-- 底部 -->
         <OutFooter />
     </div>
 </template>
 
 <script>
+    import axios from "axios"
     import OutFooter from "@/components/OutFooter";
     import OutHeader from "@/components/OutHeader";
     export default {
         name: "PagesRegister",
         data() {
             return {
-                imgUrl: require("../assets/images/register-pic.png")
+                imgUrl: require("../assets/images/register-pic.png"),
+                verifiyDate: new Date().getTime(),
+                errors: {
+                    email: "",
+                    password: "",
+                    verifiy: ""
+                },
+                user: {
+                    email: "",
+                    password: "",
+                    verifiy: ""
+                }
             }
         },
         components: {
             OutHeader,
             OutFooter,
+        },
+        methods: {
+            register() {
+                axios
+                .post("/api?action=register",this.user)
+                .then(({data}) => {
+                    console.log(data);
+                    if (data.code == 0) {
+                        this.errors = data.error;
+                        return;
+                    }
+                    if (data.code ==1) {
+                        this.$Modal.confirm({
+                            title: "账号注册",
+                            content:"您已注册成功,是否跳转到登录页面",
+                            okText: "跳转",
+                            cancelText: "取消",
+                            onOk: () => {
+                                this.$router.push("/login");
+                            }
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                
+            }
+        },
+        computed: {
+            url () {
+                return "/api/verifiycode.gif?" + this.verifiyDate;
+            }
         }
     }
 </script>
@@ -114,6 +160,13 @@
                 color: #323232;
                 p {
                     padding-bottom: 6px;
+                }
+                .err {
+                    flex-direction: column;
+                    .reminder {
+                        font-size: .75px;
+                        color: red;
+                    }
                 }
                 .input {
                     width: 100%;

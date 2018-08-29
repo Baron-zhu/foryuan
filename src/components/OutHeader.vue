@@ -6,12 +6,13 @@
                     <img src="../assets/images/logo.png" />
                 </router-link>
             </div>
-            <div class="wel">欢迎登录</div>
-            <div class="goreg">
+            <div class="wel" v-show="register">欢迎登录</div>
+            <div class="wel" v-show="login">欢迎注册</div>
+            <div class="goreg" v-show="register">
                 没有账号?
                 <router-link to="/register">立即注册</router-link>
             </div>
-            <div class="golog">
+            <div class="golog" v-show="login">
                 已有账号?
                 <router-link to="/login">请登录</router-link>
             </div>
@@ -22,7 +23,11 @@
 
 <script>
     export default {
-        name: "OutHeader"
+        name: "OutHeader",
+        props: {
+            register: Boolean,
+            login: Boolean
+        }
     }
 </script>
 

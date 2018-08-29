@@ -1,6 +1,6 @@
 <template>
     <div class="login">
-        <OutHeader />
+        <OutHeader :register="true" />
         <div class="warning">
             <div class="warning-icon">
                 <img src="../assets/images/warning.png" />
@@ -38,15 +38,15 @@
                         <form action="">
                             <div class="login-input">
                                 <i><img src="../assets/images/user.png" /></i>
-                                <input type="text" placeholder="您的账户名和登录名">
+                                <input type="text" v-model="user.email" placeholder="您的账户名和登录名">
                             </div>
                             <div class="login-input">
                                 <i><img src="../assets/images/locked.png" /></i>
-                                <input type="password" placeholder="福缘密码">
+                                <input type="password" v-model="user.password" placeholder="福缘密码">
                             </div>
                             <p><router-link to="">忘记密码</router-link></p>
                             <div class="login-input">
-                                <input type="button" value="登录">
+                                <input @click="login" type="button" value="登录">
                             </div>
                         </form>
                     </div>
@@ -74,8 +74,10 @@
 </template>
 
 <script>
+    import axios from "axios"
     import OutFooter from "@/components/OutFooter";
     import OutHeader from "@/components/OutHeader";
+    import { mapActions } from "vuex";
     export default {
     name: "PagesLogin",
     data() {
@@ -110,30 +112,33 @@
         }
     },
     methods: {
+        // ...mapActions([
+        //     "LOGIN_STATE"
+        // ]),
         toggle () {
             
         },
         login() {
             // console.log(this.user);
-            // axios.post()向服务器发送请求
-            // axios
-            // .post("/api?action=login",this.user) // post() 发起 post 请求
-            // .then(({data}) => { // then() 获取结果  ({data})对象解构模式
-            //     console.log(data);
-            //     if (data.code ==0) {
-            //         // this.errors = data.error;   
-            //         Object.keys(data.error).map(k => {
-            //             this.errors[k] = data.error[k];
-            //         });
-            //         return;
-            //     };
-            //     this.LOGIN_STATE(true);
-            //     this.setUser(this.user);
-            //     this.$router.push("/admin");
-            // })
-            // .catch (err => { // catch() 获取错误
-            //     console.log(err);
-            // });
+            // axios.post(path,arg)向服务器发送请求
+            axios
+            .post("/api?action=login",this.user) // post() 发起 post 请求
+            .then(({data}) => { // then(res=>{}) 获取结果  ({data})对象解构模式
+                console.log(data);
+                if (data.code ==0) {
+                    this.errors = data.error;   
+                    this.$router.push("/personal");
+                    return;
+                };
+                if (data.code == 1) {
+                    this.$router.push("/personal");
+                }
+                // this.LOGIN_STATE(true);
+                // this.setUser(this.user);
+            })
+            .catch (err => { // catch() 获取错误
+                console.log(err);
+            });
         }
     },
     components: {
